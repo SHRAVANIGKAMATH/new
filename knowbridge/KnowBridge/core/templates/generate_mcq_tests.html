@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate MCQ Tests - KnowBridge</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background: #007bff;
+            color: white;
+            padding: 15px;
+            text-align: center;
+        }
+        main {
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .form-container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        .form-container label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-container input, .form-container button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .form-container button {
+            background-color: #007bff;
+            color: white;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+        }
+        .form-container button:hover {
+            background-color: #0056b3;
+        }
+        .question {
+            background: white;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .options {
+            padding-left: 20px;
+            margin-top: 10px;
+        }
+        .options li {
+            list-style-type: disc;
+            margin-bottom: 5px;
+        }
+        .correct {
+            color: green;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .no-mcq {
+            text-align: center;
+            background: #fff;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Generate and View MCQ Tests</h1>
+    </header>
+    <main>
+        <!-- Form for Generating MCQs -->
+        <div class="form-container">
+            <form method="post" action="{% url 'generate_mcq_tests' %}">
+                {% csrf_token %}
+                <label for="topic">Enter Topic:</label>
+                <input type="text" id="topic" name="topic" placeholder="E.g., Artificial Intelligence" required>
+                <label for="num_questions">Number of Questions:</label>
+                <input type="number" id="num_questions" name="num_questions" min="1" max="20" required>
+                <button type="submit">Generate MCQs</button>
+            </form>
+        </div>
+
+        <!-- Display Generated MCQs -->
+        <h2>Generated MCQ Tests</h2>
+        {% if mcqs %}
+            {% for mcq in mcqs %}
+                <div class="question">
+                    <p><strong>Question {{ forloop.counter }}:</strong> {{ mcq.question }}</p>
+                    <ul class="options">
+                        {% for option in mcq.options %}
+                            <li>{{ option }}</li>
+                        {% endfor %}
+                    </ul>
+                    <p class="correct">Correct answer: {{ mcq.correct_answer }}</p>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="no-mcq">
+                <p>No MCQs generated yet. Please enter a topic and number of questions to generate MCQs.</p>
+            </div>
+        {% endif %}
+    </main>
+</body>
+</html>

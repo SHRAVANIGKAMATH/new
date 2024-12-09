@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Dashboard</title>
+    <style>
+        .mcq-section {
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .chapter-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .mcq-item {
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Teacher Dashboard</h1>
+
+    <h2>Uploaded Syllabus Text</h2>
+    <p>{{ syllabus_text }}</p>
+
+    <h2>Chapters</h2>
+    <ul>
+        {% for chapter in chapters %}
+            <li>{{ chapter }}</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Generated MCQs</h2>
+    {% if mcqs %}
+        {% for chapter, questions in mcqs.items %}
+            <div class="mcq-section">
+                <div class="chapter-title">{{ chapter }}</div>
+                {% if questions %}
+                    <ol>
+                        {% for question in questions %}
+                            <li>{{ question }}</li>
+                        {% endfor %}
+                    </ol>
+                {% else %}
+                    <p>No MCQs generated for this chapter.</p>
+                {% endif %}
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>No MCQs generated yet. Upload a syllabus file to start.</p>
+    {% endif %}
+</body>
+</html>

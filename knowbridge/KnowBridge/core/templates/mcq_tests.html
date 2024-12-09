@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generated MCQ Tests - KnowBridge</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+        header {
+            background: #007bff;
+            color: #fff;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center.
+        }
+        nav ul {
+            list-style: none.
+            display: flex.
+            margin: 0.
+            padding: 0.
+        }
+        nav ul li {
+            margin-right: 15px.
+        }
+        nav ul li a {
+            font-size: 2.5vh.
+            color: #fff.
+            text-decoration: none.
+        }
+        nav ul li a:hover {
+            color: #333.
+        }
+        main {
+            padding: 20px.
+        }
+        .mcq-test {
+            background-color: #f4f4f4.
+            padding: 10px.
+            border-radius: 5px.
+            margin-top: 20px.
+        }
+        .button-container {
+            margin-top: 20px.
+        }
+        .button-container button {
+            background-color: #007bff.
+            color: #fff.
+            border: none.
+            padding: 10px 20px.
+            cursor: pointer.
+            border-radius: 5px.
+        }
+    </style>
+    <script>
+        function confirmSend() {
+            return confirm("Are you sure you want to confirm and send these MCQs to students?");
+        }
+    </script>
+</head>
+<body>
+    <header>
+        <div>
+            <h1 style="color: #ff8400;">KnowBridge</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/highlights/">Highlights</a></li>
+                <li><a href="/contact/">Contact Us</a></li>
+                <li><a href="{% url 'logout' %}">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h2>Generated MCQ Tests</h2>
+        {% if mcq_tests %}
+            {% for test in mcq_tests %}
+                <div class="mcq-test">
+                    <p>{{ test.question }}</p>
+                    <ul>
+                        {% for option in test.options %}
+                            <li>{{ option }}</li>
+                        {% endfor %}
+                    </ul>
+                    <p>Correct Answer: {{ test.correct }}</p>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No MCQs available. Please try generating them again.</p>
+        {% endif %}
+        <div class="button-container">
+            <form method="post" action="{% url 'confirm_mcq_tests' %}" onsubmit="return confirmSend()">
+                {% csrf_token %}
+                <button type="submit">Confirm and Send to Students</button>
+            </form>
+        </div>
+    </main>
+</body>
+</html>
