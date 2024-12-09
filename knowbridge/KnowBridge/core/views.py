@@ -12,6 +12,9 @@ import logging
 import pytz  # Ensure pytz is imported
 from groq import Groq
 from django.shortcuts import render
+import warnings
+warnings.filterwarnings("ignore", category=UserWarning, module='google.cloud.firestore_v1.base_collection')
+
 
 syllabus_text=''
 
@@ -202,6 +205,9 @@ def generate_mcqs(topic, num_questions):
     )
     return response.choices[0].message.content
 
+
+import re
+
 def teacher_dashboard(request):
     user_id = request.session.get('uid')
     syllabus_text = ""
@@ -210,23 +216,28 @@ def teacher_dashboard(request):
 
     # Fetch syllabus and chapters from the database
     if user_id:
-        user_doc = db.collection('users').document(user_id).get()
-        if user_doc.exists:
-            user_data = user_doc.to_dict()
-            syllabus_entries = user_data.get('syllabus_text', [])
-            syllabus_entries = [entry for entry in syllabus_entries if isinstance(entry, dict)]
-            
-            if syllabus_entries:
-                latest_entry = max(syllabus_entries, key=lambda x: x.get('timestamp'))
-                if isinstance(latest_entry, dict):
+        try:
+            user_doc = db.collection('users').document(user_id).get()
+            if user_doc.exists:
+                user_data = user_doc.to_dict()
+                syllabus_entries = user_data.get('syllabus_text', [])
+                if syllabus_entries:
+                    latest_entry = max(
+                        (entry for entry in syllabus_entries if isinstance(entry, dict)),
+                        key=lambda x: x.get('timestamp', 0),
+                        default={}
+                    )
                     syllabus_text = latest_entry.get('text', "")
                     chapters = latest_entry.get('chapters', [])
+        except Exception as e:
+            messages.error(request, f"Error fetching syllabus: {str(e)}")
 
     # Process uploaded syllabus file
     if request.method == 'POST':
         file = request.FILES.get('syllabus_file')
         if file:
             try:
+                # Step 1: Read and preprocess the file
                 file_bytes = file.read()
                 reader = easyocr.Reader(['en'], gpu=False)
                 image = Image.open(io.BytesIO(file_bytes))
@@ -234,10 +245,20 @@ def teacher_dashboard(request):
                 image.save(image_bytes, format=image.format)
                 image_bytes = image_bytes.getvalue()
 
+                # Step 2: Perform OCR
                 result = reader.readtext(image_bytes, detail=0, paragraph=True)
                 parsed_text = ' '.join(result)
+                
+                # Step 3: Remove numbers, digits, "to", "chapter", and "t"
+                parsed_text = re.sub(r'\d+', '', parsed_text)  # Remove numbers
+                parsed_text = re.sub(r'[^\w\s,\.]', '', parsed_text)  # Remove special characters except for commas and periods
+                parsed_text = re.sub(r'\b(to|chapter)\b', '', parsed_text, flags=re.IGNORECASE)  # Remove "to" and "chapter"
+                parsed_text = parsed_text.replace(' t', ' ')  # Remove occurrences of "t" (isolated)
+
+                # Step 4: Extract chapters
                 chapters = [chapter.strip() for part in parsed_text.split('.') for chapter in part.split(',') if chapter.strip()]
 
+                # Step 5: Save OCR results to Firestore
                 if user_id:
                     ist = pytz.timezone('Asia/Kolkata')
                     current_time = datetime.now(ist).astimezone(ist)
@@ -248,7 +269,7 @@ def teacher_dashboard(request):
                         'flagged': False,
                         'timestamp': current_time
                     }
-                    db.collection('ocr_results').add(ocr_data)
+                    db.collection('ocr_results').add(ocr_data)  # Save full OCR data
                     db.collection('users').document(user_id).update({
                         'syllabus_text': firestore.ArrayUnion([{
                             'text': parsed_text,
@@ -256,7 +277,6 @@ def teacher_dashboard(request):
                             'timestamp': current_time
                         }])
                     })
-
                     syllabus_text = parsed_text
                     messages.success(request, "OCR Successful! Parsed text and chapters stored.")
                 else:
@@ -270,11 +290,12 @@ def teacher_dashboard(request):
     if chapters:
         try:
             for chapter in chapters:
-                raw_mcqs = generate_mcqs(chapter, num_questions=5)
+                raw_mcqs = generate_mcqs(chapter, num_questions=5)  # Assuming generate_mcqs is defined
                 mcqs[chapter] = raw_mcqs.split("\n")  # Split MCQs into a list
         except Exception as e:
             messages.error(request, f"Failed to generate MCQs: {str(e)}")
 
+    # Render the dashboard template with data
     return render(request, 'teacher_dashboard.html', {
         'syllabus_text': syllabus_text,
         'chapters': chapters,

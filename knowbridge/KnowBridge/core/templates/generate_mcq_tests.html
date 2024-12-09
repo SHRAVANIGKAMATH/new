@@ -103,7 +103,7 @@
         {% if mcqs %}
             {% for mcq in mcqs %}
                 <div class="question">
-                    <p><strong>Question {{ forloop.counter }}:</strong> {{ mcq.question }}</p>
+                    <p>{{ mcq.question }}</p>
                     <ul class="options">
                         {% for option in mcq.options %}
                             <li>{{ option }}</li>

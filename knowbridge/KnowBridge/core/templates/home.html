@@ -5,93 +5,122 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home - KnowBridge</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
+        /* Global Styles */
+        html, body {
+            font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
-            line-height: 1.6;
+            background: #b9d3ed;
+            color: #333;
+            transition: background 0.3s, color 0.3s;
         }
+
+        /* Dark Mode */
+        .dark-mode html, .dark-mode body {
+            background: #2c3e50;
+            color: #ecf0f1;
+        }
+
+        /* Header Styles */
         header {
             background: #007bff;
-            color: #000000;
-            padding: 0px;
-            padding-left: 10px;
+            color: #fff;
+            padding: 20px 10px;
         }
+
+        .dark-mode header {
+            background: #34495e;
+        }
+
         header h1 {
-            font-size: 6vh; /* Increased size */
-            margin: 0; /* Remove margin */
-            color: #000000; /* Changed color */
+            font-size: 6vh;
+            margin: 0;
+            color: #ff8400;
         }
+
+        /* Navbar */
         nav {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 10px 20px;
-            
-
         }
+
         nav ul {
             list-style: none;
             display: flex;
             margin: 0;
             padding: 0;
-            font-size: 3vh;
-            
+            font-size: 2.5vh;
         }
+
         nav ul li {
-            margin-right: 15px; /* Adjusted margin */
+            margin-right: 15px;
         }
+
         nav ul li a {
-            font-size: 2.5vh; /* Decreased size */
             color: #fff;
             text-decoration: none;
         }
+
         nav ul li a:hover {
-            color: #333; /* Dark grey color on hover */
+            color: #333;
         }
+
+        .dark-mode nav ul li a {
+            color: #ecf0f1;
+        }
+
+        .dark-mode nav ul li a:hover {
+            color: #ecf0f1;
+        }
+
+        /* Toggle Button */
+        .toggle-btn {
+            background: transparent;
+            color: #fff;
+            font-size: 2.5vh;
+            cursor: pointer;
+            border: none;
+            background-color: transparent;
+            transition: color 0.3s;
+        }
+
+        .dark-mode .toggle-btn {
+            color: #ecf0f1;
+        }
+
+        /* Main Section */
         main {
             text-align: center;
             padding: 100px;
-            border:100px;
         }
-        main p{
-            font-size:2.5vh;
+
+        main h2 {
+            font-size: 6vh;
+            margin: 2rem 0;
         }
+
+        main p {
+            font-size: 2.5vh;
+            margin-bottom: 20px;
+        }
+
         .button {
             background-color: #007bff;
             color: white;
             padding: 10px 20px;
             border-radius: 5px;
             text-decoration: none;
-            font-size: 40px;
-        }
-        .button:hover {
-            background-color: #333; /* Dark grey color on hover */
-        }
-        footer {
-            background: #f4f4f4;
-            font-size: 2vh;
-            color: #555;
-            text-align: center;
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            margin: 0; /* Remove margin */
-            padding: 0; /* Ensure no padding as well */
-        }
-        body {
-            font-family: 'Arial', sans-serif;
-            margin: 0;
-            padding: 0;
-            background: #b9d3ed;
-            color: #333;
+            font-size: 2.5vh;
         }
 
-        h2 {
-            text-align: center;
-            font-size: 6vh; /* Increased font size */
-            margin: 2rem 0;
-            color: #2c3e50;
+        .button:hover {
+            background-color: #333;
+        }
+
+        .dark-mode .button {
+            background-color: #34495e;
         }
 
         /* Highlights Section */
@@ -104,23 +133,18 @@
 
         .card-container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Increased card minimum width */
-            gap: 100rem;
-            width: 100%;
-            max-width: 1200px;
-            gap: 100px;
-            margin-left:200px;
-            margin-bottom:500px;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            margin: 50px auto;
         }
 
         /* Flip Card */
         .card {
             perspective: 1000px;
             position: relative;
-            width: 110%;
-            height: 600px; /* Increased height */
+            width: 100%;
+            height: 300px;
             cursor: pointer;
-            
         }
 
         .card-front, .card-back {
@@ -133,21 +157,34 @@
             align-items: center;
             justify-content: center;
             flex-direction: column;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Slightly increased shadow */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
             transition: transform 0.6s;
         }
 
+        /* Front Card */
         .card-front {
             background: #4caf50;
             color: #fff;
         }
 
+        /* Dark Mode: Lighten the front card color for contrast */
+        .dark-mode .card-front {
+            background: #1abc9c; /* Brighter teal for contrast in dark mode */
+        }
+
+        /* Back Card */
         .card-back {
             background: #2c3e50;
             color: #fff;
             transform: rotateY(180deg);
         }
 
+        /* Dark Mode: Darken the back card color */
+        .dark-mode .card-back {
+            background: #4caf50; /* Darker background for card back in dark mode */
+        }
+
+        /* Flip Animation */
         .card:hover .card-front {
             transform: rotateY(180deg);
         }
@@ -157,40 +194,48 @@
         }
 
         .icon {
-            font-size: 3.5rem; /* Slightly larger icon */
+            font-size: 3.5rem;
             margin-bottom: 1rem;
         }
 
         h3 {
             margin: 0;
-            font-size: 2rem; /* Larger title */
+            font-size: 2rem;
         }
 
         p {
             margin: 1rem;
             text-align: center;
-            font-size: 1.8rem; /* Larger description text */
-            line-height: 1.6;
+            font-size: 1.5rem;
         }
-       
-    </style>
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const highlightLink = document.querySelector("a[href='#highlights']");
-            const highlightSection = document.getElementById("highlights");
 
-            highlightLink.addEventListener("click", function (e) {
-                e.preventDefault();
-                highlightSection.scrollIntoView({ behavior: "smooth" });
-            });
-        });
-    </script>
+        /* Footer */
+        footer {
+            background: #f4f4f4;
+            font-size: 2vh;
+            color: #555;
+            text-align: center;
+            padding: 20px 0;
+            position: relative;
+            width: 100%;
+        }
+
+        .dark-mode footer {
+            background: #34495e;
+            color: #ecf0f1;
+        }
+
+        footer p {
+            margin: 0;
+        }
+
+    </style>
 </head>
 <body>
     <header>
         <nav>
             <div>
-                <h1 id="header"><a href="/" style="color: #ff8400; text-decoration: none;">KnowBridge</a></h1> <!-- Updated color -->
+                <h1 id="header"><a href="/" style="color: #ff8400; text-decoration: none;">KnowBridge</a></h1>
             </div>
             <ul>
                 <li><a href="/">Home</a></li>
@@ -198,24 +243,17 @@
                 <li><a href="/get_started/">Get Started</a></li>
                 <li><a href="/contact">Contact us</a></li>
             </ul>
+            <button class="toggle-btn" onclick="toggleMode()">🌙</button> <!-- Sun/Moon Icon -->
         </nav>
     </header>
-    <main><br>
-        <br>
-        <br>
+
+    <main>
         <h2>Empower Your Learning Journey</h2>
-        <br>
-        <br>
-        <p>Enhance your skills with KnowBridge's AI-powered tools for smarter lesson planning, test generation, and progress tracking. 
-            Start your journey today and achieve academic success with ease.<p>
-        <p>Join us to enhance your skills and knowledge. Click the button below to get started.</p><br>
-        <br>
-        <br>
+        <p>Enhance your skills with KnowBridge's AI-powered tools for smarter lesson planning, test generation, and progress tracking. Start your journey today and achieve academic success with ease.</p>
+        <p>Join us to enhance your skills and knowledge. Click the button below to get started.</p>
         <a class="button" href="/get_started/">Get Started</a>
-        
-        
-        
     </main>
+
     <main id="highlights">
         <h2>Highlights</h2>
         <div class="card-container">
@@ -248,8 +286,23 @@
             </div>
         </div>
     </main>
+
     <footer>
         <p>&copy; 2024 KnowBridge. All Rights Reserved.</p>
     </footer>
+
+    <script>
+        // Toggle light/dark mode
+        function toggleMode() {
+            document.documentElement.classList.toggle('dark-mode');
+            // Change icon to reflect current mode
+            const button = document.querySelector('.toggle-btn');
+            if (document.documentElement.classList.contains('dark-mode')) {
+                button.textContent = '☀️'; // Sun icon for light mode
+            } else {
+                button.textContent = '🌙'; // Moon icon for dark mode
+            }
+        }
+    </script>
 </body>
 </html>

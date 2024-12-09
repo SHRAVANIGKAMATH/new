@@ -19,6 +19,9 @@
         .mcq-item {
             margin-bottom: 15px;
         }
+        ul{
+            list-style-type: none;
+        }
     </style>
 </head>
 <body>
@@ -33,18 +36,27 @@
             <li>{{ chapter }}</li>
         {% endfor %}
     </ul>
+    <form method="post" enctype="multipart/form-data" onsubmit="return validateFileUpload()">
+        {% csrf_token %}
 
+        <label for="syllabus_file">Reupload Syllabus</label>
+        <input type="file" name="syllabus_file" id="syllabus_file" onchange="this.form.submit()">
+        <div class="button-container">
+            <button onclick="window.location.href='{% url 'generate_mcq_tests' %}'">Portions Completed</button>
+        </div>
+    </form>
     <h2>Generated MCQs</h2>
     {% if mcqs %}
         {% for chapter, questions in mcqs.items %}
             <div class="mcq-section">
                 <div class="chapter-title">{{ chapter }}</div>
                 {% if questions %}
-                    <ol>
+                    <ul>
                         {% for question in questions %}
                             <li>{{ question }}</li>
+                            <br>
                         {% endfor %}
-                    </ol>
+                    </ul>
                 {% else %}
                     <p>No MCQs generated for this chapter.</p>
                 {% endif %}
